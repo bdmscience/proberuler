@@ -1,0 +1,25 @@
+particles = readtable('.csv')
+mkdir ''
+x1 = particles.x(particles.vis_probe == 0)
+y1 = particles.y(particles.vis_probe == 0)
+x2 = particles.x(particles.vis_probe == 1)
+y2 = particles.y(particles.vis_probe == 1)
+x3 = particles.x(particles.vis_probe == 2)
+y3 = particles.y(particles.vis_probe == 2)
+%analysis round 1 probe3 to probe1
+cent0 = [mean(x1),mean(y1)];
+cent3 = [mean(x3),mean(y3)];
+r = cent3-cent0;
+rmag = norm(r);
+
+angle = atan(r(2)/r(1)); %angle of the distance vector in radians
+% rotation matrix is [x cos, -y sin; x sin, y cos]
+
+q3 = [x3*cos(-angle)-y3*sin(-angle),x3*sin(-angle)+y3*cos(-angle)];
+q0 = [x1*cos(-angle)-y1*sin(-angle),x1*sin(-angle)+y1*cos(-angle)];
+
+dist0 = q0(:,1)-mean(q0(:,1));
+dist3 = q3(:,1)-mean(q0(:,1)); % distance along the centroid-centroid axis
+if mean(dist3) < 0
+    dist3 = -dist3;
+end
